@@ -1,5 +1,3 @@
-import { format } from 'prettier';
-
 const HEAD_SYMBOL = '%STASCII_HEAD%';
 const BODY_SYMBOL = '%STASCII_BODY%';
 
@@ -20,5 +18,5 @@ const template = `
 
 export async function generateDocument(head: string, body: string) {
 	const document = template.replace(HEAD_SYMBOL, head).replace(BODY_SYMBOL, body);
-	return format(document, { parser: 'html' });
+	return document;
 }

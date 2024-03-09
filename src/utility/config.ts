@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import * as v from 'valibot';
 
-const ConfigSchema = v.transform(
+export const ConfigSchema = v.transform(
 	v.object({
 		name: v.string(),
 		description: v.string(),
