@@ -51,6 +51,10 @@ pnpm dlx stascii [command] [options]
 
 ```bash
 pnpm dlx stascii build
+
+# npx stascii build
+# yarn dlx stascii build
+# bunx stascii build
 ```
 
 This will build your site and place the generated HTML files in the `outDir` directory.
