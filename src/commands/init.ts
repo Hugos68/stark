@@ -4,7 +4,7 @@ import { ConfigSchema } from '../utility/config.js';
 
 export async function init() {
 	if ((await fs.readdir('.')).length > 0) {
-		throw new Error('Directory is not empty, cannot initialize project');
+		throw new Error('Error initializing project: Current directory is not empty');
 	}
 
 	const config: v.Input<typeof ConfigSchema> = {
@@ -15,6 +15,6 @@ export async function init() {
 	await fs.mkdir('pages');
 	await fs.writeFile(
 		'pages/index.adoc',
-		`= Welcome to My Site\n\nYou can edit this file to get started!\n\nIf you have any questions, https://github.com/Hugos68/stascii[check the documentation on GitHub.]`,
+		`:title: Welcome\n\n= Welcome to My Site\n\nYou can edit this file to get started!\n\nIf you have any questions, https://github.com/Hugos68/stascii[check the documentation on GitHub.]`,
 	);
 }

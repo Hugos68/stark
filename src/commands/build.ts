@@ -4,6 +4,7 @@ import { join, basename } from 'path';
 import asciidoctor, { Asciidoctor } from 'asciidoctor';
 import * as v from 'valibot';
 import { generateDocument } from '../utility/template.js';
+import { intro } from '@clack/prompts';
 
 const PageSchema = v.object({
 	filename: v.string(),
@@ -18,6 +19,7 @@ const AttributesSchema = v.object({
 });
 
 export async function build() {
+	intro('Building site');
 	const config = await getConfig();
 	const pages = await getPages(config.pagesDir);
 

@@ -1,21 +1,12 @@
 import { promises as fs } from 'fs';
 import * as v from 'valibot';
 
-export const ConfigSchema = v.transform(
-	v.object({
-		name: v.string(),
-		description: v.string(),
-		pagesDir: v.optional(v.string()),
-		outDir: v.optional(v.string()),
-	}),
-	(input) => {
-		return {
-			pagesDir: 'pages',
-			outDir: 'dist',
-			...input,
-		};
-	},
-);
+export const ConfigSchema = v.object({
+	name: v.string(),
+	description: v.string(),
+	pagesDir: v.optional(v.string(), 'pages'),
+	outDir: v.optional(v.string(), 'dist'),
+});
 
 export async function getConfig() {
 	const rawConfig = await fs.readFile('stascii.config.json', 'utf-8');

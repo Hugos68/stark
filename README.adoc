@@ -1,19 +1,20 @@
 = stascii
 
-A Static Site Generator using AsciiDoc.
+A Static Site Generator (SSG) using https://asciidoc.org/[AsciiDoc].
+
+== Getting started
+
+To create a stascii project run the following command:
+
+```bash
+pnpm dlx stascii init
+
+# npx stascii init
+# yarn dlx stascii init
+# bunx stascii init
+```
 
 == Configuration
-
-In the root of your app create a file called `stascii.config.json`, for example:
-
-```json
-{
-    "name": "My Site",
-    "description": "My site description",
-    "pagesDir": "pages",
-    "outDir": "dist"
-}
-```
 
 === name
 
@@ -47,7 +48,9 @@ pnpm dlx stascii [command] [options]
 
 == Commands
 
-=== Build
+=== init
+
+=== build
 
 ```bash
 pnpm dlx stascii build
