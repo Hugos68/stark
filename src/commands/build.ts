@@ -1,11 +1,12 @@
 import { getConfig } from '../utility/config.js';
 import { promises as fs } from 'fs';
-import { join, basename, relative } from 'path';
+import { join, basename } from 'path';
 import asciidoctor, { Asciidoctor } from 'asciidoctor';
 import * as v from 'valibot';
 import { generateDocument } from '../utility/template.js';
 
 const PageSchema = v.object({
+	filename: v.string(),
 	slug: v.string(),
 	path: v.string(),
 });
@@ -29,14 +30,16 @@ export async function build() {
 
 	// Convert each page to HTML
 	const documents = await Promise.all(
-		pages.map(async ({ path, slug }) => {
-			const document = ascii.loadFile(path);
+		pages.map(async ({ filename, path, slug }) => {
+			const document = ascii.loadFile(join(config.pagesDir, path, filename));
 			const attributes = v.parse(AttributesSchema, document.getAttributes());
+			const head = `
+				<title>${attributes.title} - ${config.name}</title>
+				<meta name="description" content="${attributes.title}" />
+				`;
+			const body = document.convert();
 			return {
-				content: await generateDocument(
-					`<title>${attributes.title}</title>`,
-					document.convert(),
-				),
+				content: await generateDocument(head, body),
 				path,
 				slug,
 			};
@@ -55,8 +58,16 @@ export async function build() {
 	// Write HTML files to output directory
 	await Promise.all(
 		documents.map(async (document) => {
-			const outputPath = join(config.outDir, document.slug + '.html');
-			await fs.writeFile(outputPath, document.content);
+			const outDir = join(config.outDir, document.path);
+			const filename = `${document.slug}.html`;
+			try {
+				await fs.access(outDir);
+			} catch {
+				await fs.mkdir(outDir, {
+					recursive: true,
+				});
+			}
+			await fs.writeFile(join(outDir, filename), document.content);
 		}),
 	);
 }
@@ -64,30 +75,25 @@ export async function build() {
 async function getPages(directory: string) {
 	const pages: Page[] = [];
 
-	try {
-		const entries = await fs.readdir(directory, {
-			withFileTypes: true,
-		});
+	const entries = await fs.readdir(directory, {
+		withFileTypes: true,
+		recursive: true,
+	});
 
-		for (const entry of entries) {
-			const itemPath = join(directory, entry.name);
+	const files = entries.filter((entry) => entry.isFile());
 
-			if (entry.isFile()) {
-				if (entry.name.endsWith('.adoc')) {
-					const slug = basename(itemPath, '.adoc');
-					const relativePath = relative(process.cwd(), itemPath);
-					const page = v.parse(PageSchema, {
-						slug,
-						path: relativePath,
-					});
-					pages.push(page);
-				}
-			} else if (entry.isDirectory()) {
-				pages.push(...(await getPages(itemPath)));
-			}
-		}
-	} catch (err) {
-		console.error('Error reading directory:', err);
+	for (const file of files) {
+		const filename = file.name;
+		const slug = basename(file.name, '.adoc');
+		/**
+		 * @example "pages" -> ""
+		 * @example "pages/foo" -> "foo"
+		 * @example "pages/foo/bar" -> "foo/bar"
+		 */
+		const path = file.path.replace(/^(.*?)pages(\\|\/)?/, '');
+		const page = v.parse(PageSchema, { filename, slug, path });
+		pages.push(page);
 	}
+
 	return pages;
 }
