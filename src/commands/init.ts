@@ -37,17 +37,17 @@ export async function init() {
 
 	const config: v.Input<typeof ConfigSchema> = { name, description };
 
-	const s = spinner();
+	const scaffoldSpinner = spinner();
 
-	s.start('Creating stascii.config.json...');
+	scaffoldSpinner.start('Creating stascii.config.json...');
 	await fs.writeFile('stascii.config.json', JSON.stringify(config, null, 2));
-	s.stop('Created stascii.config.json');
+	scaffoldSpinner.stop('Created stascii.config.json');
 
-	s.start('Creating pages directory...');
+	scaffoldSpinner.start('Creating pages directory...');
 	await fs.mkdir('pages');
 	await fs.writeFile(
 		'pages/index.adoc',
 		`:title: Welcome\n\n= Welcome to My Site\n\nYou can edit this file to get started!\n\nIf you have any questions, https://github.com/Hugos68/stascii[check the documentation on GitHub.]`,
 	);
-	s.stop('Created pages directory');
+	scaffoldSpinner.stop('Created pages directory');
 }
