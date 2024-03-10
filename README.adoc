@@ -1,63 +1,21 @@
 = stascii
 
-A Static Site Generator (SSG) using https://asciidoc.org/[AsciiDoc].
+A Static Site Generator using https://asciidoc.org/[AsciiDoc] built with Go.
 
-== Getting started
+== Installation
 
-To create a stascii project run the following command:
-
-```bash
-pnpm dlx stascii init
-
-# npx stascii init
-# yarn dlx stascii init
-# bunx stascii init
-```
-
-== Configuration
-
-=== name
-
-The name of your site, this will be used in the title tag of the generated HTML.
-
-=== description
-
-The description of your site, this will be used in the meta description tag of the generated HTML.
-
-=== pagesDir
-
-The directory where your AsciiDoc files are located.
-
-Default: `pages`
-
-=== outDir
-
-The directory where the generated HTML files will be placed.
-
-Default: `dist`
-
-== Usage
-
-```bash
-pnpm dlx stascii [command] [options]
-
-# npx stascii [command] [options]
-# yarn dlx stascii [command] [options]
-# bunx stascii [command] [options]
-```
+TBD
 
 == Commands
 
 === init
 
+```bash
+stascii init
+```
+
 === build
 
 ```bash
-pnpm dlx stascii build
-
-# npx stascii build
-# yarn dlx stascii build
-# bunx stascii build
+stascii build
 ```
-
-This will build your site and place the generated HTML files in the `outDir` directory.
