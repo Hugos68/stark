@@ -1,6 +1,6 @@
-= stascii
+= stamd
 
-A Static Site Generator using https://asciidoc.org/[AsciiDoc] built with Go.
+A CLI to easily create static sites using markdown.
 
 == Installation
 
@@ -11,11 +11,11 @@ TBD
 === init
 
 ```bash
-stascii init
+stamd init
 ```
 
 === build
 
 ```bash
-stascii build
+stamd build
 ```
