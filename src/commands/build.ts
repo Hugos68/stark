@@ -1,10 +1,10 @@
 import { getConfig } from '../utility/config.js';
-import { promises as fs } from 'fs';
+import { existsSync, promises as fs } from 'fs';
 import { join, basename } from 'path';
 import asciidoctor, { Asciidoctor } from 'asciidoctor';
 import * as v from 'valibot';
 import { generateDocument } from '../utility/template.js';
-import { intro } from '@clack/prompts';
+import { cancel, spinner } from '@clack/prompts';
 
 const PageSchema = v.object({
 	filename: v.string(),
@@ -19,59 +19,76 @@ const AttributesSchema = v.object({
 });
 
 export async function build() {
-	intro('Building site');
 	const config = await getConfig();
 	const pages = await getPages(config.pagesDir);
 
 	if (pages.length === 0) {
-		throw new Error(`No pages found in: "${config.pagesDir}"`);
+		cancel(`Operation cancelled: No pages found in: "${config.pagesDir}"`);
+		process.exit(0);
 	}
 
+	// Convert each page to HTML
 	// @ts-expect-error
 	const ascii = asciidoctor() as Asciidoctor;
-
-	// Convert each page to HTML
+	const convertSpinner = spinner();
+	convertSpinner.start('Converting pages to HTML...');
 	const documents = await Promise.all(
 		pages.map(async ({ filename, path, slug }) => {
-			const document = ascii.loadFile(join(config.pagesDir, path, filename));
-			const attributes = v.parse(AttributesSchema, document.getAttributes());
-			const head = `
+			convertSpinner.message(`Converting "${path ? join(path, filename) : filename}"`);
+			try {
+				const document = ascii.loadFile(join(config.pagesDir, path, filename));
+				const attributes = v.parse(AttributesSchema, document.getAttributes());
+				const head = `
 				<title>${attributes.title} - ${config.name}</title>
 				<meta name="description" content="${attributes.title}" />
 				`;
-			const body = document.convert();
-			return {
-				content: await generateDocument(head, body),
-				path,
-				slug,
-			};
+				const body = document.convert();
+				convertSpinner.message(`Converted "${path ? join(path, filename) : filename}"`);
+				return {
+					content: await generateDocument(head, body),
+					path,
+					slug,
+				};
+			} catch {
+				cancel(
+					`Operation cancelled: Unable to parse "${path ? join(path, filename) : filename}", make sure the file is valid AsciiDoc and the required attributes are present.`,
+				);
+				process.exit(1);
+			}
 		}),
 	);
+	convertSpinner.stop('Converted all pages to HTML');
 
 	// Create output directory if it doesn't exist
-	try {
-		await fs.access(config.outDir);
-	} catch (err) {
+	if (!existsSync(config.outDir)) {
 		await fs.mkdir(config.outDir, {
 			recursive: true,
 		});
 	}
 
 	// Write HTML files to output directory
+	const writeSpinner = spinner();
+	writeSpinner.start('Writing HTML files...');
 	await Promise.all(
-		documents.map(async (document) => {
-			const outDir = join(config.outDir, document.path);
-			const filename = `${document.slug}.html`;
+		documents.map(async ({ path, slug, content }) => {
+			const outDir = join(config.outDir, path);
+			const filename = `${slug}.html`;
+			writeSpinner.message(`Writing "${join(outDir, filename)}"`);
 			try {
-				await fs.access(outDir);
+				if (!existsSync(outDir)) {
+					await fs.mkdir(outDir, {
+						recursive: true,
+					});
+				}
+				await fs.writeFile(join(outDir, filename), content);
 			} catch {
-				await fs.mkdir(outDir, {
-					recursive: true,
-				});
+				cancel(`Operation cancelled: Unable to write to "${join(config.outDir, path)}"`);
+				process.exit(1);
 			}
-			await fs.writeFile(join(outDir, filename), document.content);
+			writeSpinner.message(`Wrote "${join(outDir, filename)}"`);
 		}),
 	);
+	writeSpinner.stop(`Wrote all pages to "${config.outDir}"`);
 }
 
 async function getPages(directory: string) {
