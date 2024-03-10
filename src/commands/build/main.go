@@ -2,6 +2,7 @@ package build
 
 import (
 	_ "embed"
+	"fmt"
 	"os"
 	"path/filepath"
 	"stamd/src/utility"
@@ -14,7 +15,13 @@ import (
 )
 
 //go:embed assets/index.html
-var template string
+var templateHTML string
+
+//go:embed assets/style.css
+var templateCSS string
+
+//go:embed assets/script.js
+var templateJS string
 
 func BuildCommand() {
 	config := utility.GetConfig()
@@ -23,8 +30,10 @@ func BuildCommand() {
 	if len(pages) == 0 {
 		panic("No valid pages found in \"" + config.PagesDir + "\".")
 	}
+
 	document := ConvertPagesToDocuments(pages, config)
 	WriteDocumentsToDisk(document, config)
+	WriteAssetsToDisk(config)
 }
 
 func GetPages(config utility.Config) []Page {
@@ -53,8 +62,7 @@ func GetPages(config utility.Config) []Page {
 func ConvertPagesToDocuments(pages []Page, config utility.Config) []Document {
 	documents := []Document{}
 
-	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.Autolink
-	p := parser.NewWithExtensions(extensions)
+	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
 
 	for _, page := range pages {
 		content, err := os.ReadFile(page.Path)
@@ -62,6 +70,8 @@ func ConvertPagesToDocuments(pages []Page, config utility.Config) []Document {
 		if err != nil {
 			panic(err)
 		}
+
+		p := parser.NewWithExtensions(extensions)
 
 		node := p.Parse(content)
 
@@ -92,13 +102,37 @@ func WriteDocumentsToDisk(documents []Document, config utility.Config) {
 			os.MkdirAll(filepath.Dir(outPath), os.ModePerm)
 		}
 
-		html := markdown.Render(document.Node, renderer)
+		body := string(markdown.Render(document.Node, renderer))
+		head := fmt.Sprintf(`
+		<meta name="description" content="%s">
+		`, config.Description)
 
-		writeFileErr := os.WriteFile(outPath, html, os.ModePerm)
+		html := strings.Replace(strings.Replace(templateHTML, "%HEAD%", head, 1), "%BODY%", body, 1)
+
+		writeFileErr := os.WriteFile(outPath, []byte(html), os.ModePerm)
 
 		if writeFileErr != nil {
 			panic(writeFileErr)
 		}
+	}
+}
+
+func WriteAssetsToDisk(config utility.Config) {
+
+	if _, err := os.Stat(config.OutDir); os.IsNotExist(err) {
+		os.Mkdir(config.OutDir, os.ModePerm)
+	}
+
+	writeFileErr := os.WriteFile(filepath.Join(config.OutDir, "style.css"), []byte(templateCSS), os.ModePerm)
+
+	if writeFileErr != nil {
+		panic(writeFileErr)
+	}
+
+	writeFileErr = os.WriteFile(filepath.Join(config.OutDir, "script.js"), []byte(templateJS), os.ModePerm)
+
+	if writeFileErr != nil {
+		panic(writeFileErr)
 	}
 }
 
