@@ -1,20 +1,20 @@
-= stamd
+# stamd
 
 A CLI to easily create static sites using markdown.
 
-== Installation
+## Installation
 
 TBD
 
-== Commands
+## Commands
 
-=== init
+### init
 
 ```bash
 stamd init
 ```
 
-=== build
+### build
 
 ```bash
 stamd build
