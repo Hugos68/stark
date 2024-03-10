@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"stascii/src/commands"
 )
 
 func main() {
@@ -16,8 +17,9 @@ func main() {
 
 	switch os.Args[1] {
 	case "init":
-		InitCommand()
+		commands.InitCommand()
 	case "build":
+		commands.BuildCommand()
 	default:
 		fmt.Println("Unknown command, run 'stascii' to see the available commands.")
 	}
