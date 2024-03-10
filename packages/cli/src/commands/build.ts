@@ -27,6 +27,8 @@ export async function build() {
 		process.exit(0);
 	}
 
+	// Grab template from Github
+
 	// Convert each page to HTML
 	// @ts-expect-error
 	const ascii = asciidoctor() as Asciidoctor;

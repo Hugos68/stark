@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"author": "Hugo Korte",
 	"scripts": {
-		"build": "pnpm --parallel build",
+		"build": "pnpm --filter stascii-template build && pnpm --filter stascii-cli build",
 		"format": "pnpm --parallel format"
 	},
 	"license": "MIT",
