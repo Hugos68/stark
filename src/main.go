@@ -3,24 +3,21 @@ package main
 import (
 	"fmt"
 	"os"
-	"stamd/src/commands"
+	"stamd/src/commands/build"
 )
 
 func main() {
 	if len(os.Args) == 1 {
 		fmt.Println("Usage:")
 		fmt.Println()
-		fmt.Println("stascii init  - Initialize the project")
-		fmt.Println("stascii build - Build the project")
+		fmt.Println("stamd build - Build the project")
 		os.Exit(0)
 	}
 
 	switch os.Args[1] {
-	case "init":
-		commands.InitCommand()
 	case "build":
-		commands.BuildCommand()
+		build.BuildCommand()
 	default:
-		fmt.Println("Unknown command, run 'stascii' to see the available commands.")
+		fmt.Println("Unknown command, run 'stamd' to see the available commands.")
 	}
 }

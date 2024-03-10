@@ -1,6 +1,7 @@
-package commands
+package build
 
 import (
+	_ "embed"
 	"os"
 	"path/filepath"
 	"stamd/src/utility"
@@ -11,6 +12,9 @@ import (
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 )
+
+//go:embed assets/index.html
+var template string
 
 func BuildCommand() {
 	config := utility.GetConfig()
