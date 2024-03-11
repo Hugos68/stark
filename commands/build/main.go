@@ -115,6 +115,8 @@ func WriteDocumentsToDisk(documents []Document, config utility.Config) {
 			panic(writeFileErr)
 		}
 	}
+
+	fmt.Println("Built project to \"" + config.OutDir + "\".")
 }
 
 func WriteAssetsToDisk(config utility.Config) {

@@ -2,6 +2,7 @@ package initialize
 
 import (
 	_ "embed"
+	"fmt"
 	"os"
 )
 
@@ -15,4 +16,5 @@ func Initialize() {
 	os.WriteFile("stark.config.json", []byte(configTemplate), os.ModePerm)
 	os.Mkdir("pages", os.ModePerm)
 	os.WriteFile("pages/index.md", []byte(markdownTemplate), os.ModePerm)
+	fmt.Println("Initialized Stark project")
 }
