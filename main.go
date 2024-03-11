@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"stark/src/commands/build"
-	"stark/src/commands/initialize"
+	"stark/commands/build"
+	"stark/commands/initialize"
 )
 
 func main() {
