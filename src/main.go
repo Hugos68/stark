@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"stark/src/commands/build"
+	"stark/src/commands/initialize"
 )
 
 func main() {
@@ -15,8 +16,10 @@ func main() {
 	}
 
 	switch os.Args[1] {
+	case "init":
+		initialize.Initialize()
 	case "build":
-		build.BuildCommand()
+		build.Build()
 	default:
 		fmt.Println("Unknown command, run 'stark' to see the available commands.")
 	}

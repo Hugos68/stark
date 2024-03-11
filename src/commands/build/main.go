@@ -15,15 +15,15 @@ import (
 )
 
 //go:embed assets/index.html
-var templateHTML string
+var layoutTemplate string
 
 //go:embed assets/style.css
-var templateCSS string
+var styleSheet string
 
 //go:embed assets/script.js
-var templateJS string
+var script string
 
-func BuildCommand() {
+func Build() {
 	config := utility.GetConfig()
 	pages := GetPages(config)
 
@@ -107,7 +107,7 @@ func WriteDocumentsToDisk(documents []Document, config utility.Config) {
 		<meta name="description" content="%s">
 		`, config.Description)
 
-		html := strings.Replace(strings.Replace(templateHTML, "%HEAD%", head, 1), "%BODY%", body, 1)
+		html := strings.Replace(strings.Replace(layoutTemplate, "%HEAD%", head, 1), "%BODY%", body, 1)
 
 		writeFileErr := os.WriteFile(outPath, []byte(html), os.ModePerm)
 
@@ -123,13 +123,13 @@ func WriteAssetsToDisk(config utility.Config) {
 		os.Mkdir(config.OutDir, os.ModePerm)
 	}
 
-	writeFileErr := os.WriteFile(filepath.Join(config.OutDir, "style.css"), []byte(templateCSS), os.ModePerm)
+	writeFileErr := os.WriteFile(filepath.Join(config.OutDir, "style.css"), []byte(styleSheet), os.ModePerm)
 
 	if writeFileErr != nil {
 		panic(writeFileErr)
 	}
 
-	writeFileErr = os.WriteFile(filepath.Join(config.OutDir, "script.js"), []byte(templateJS), os.ModePerm)
+	writeFileErr = os.WriteFile(filepath.Join(config.OutDir, "script.js"), []byte(script), os.ModePerm)
 
 	if writeFileErr != nil {
 		panic(writeFileErr)
