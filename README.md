@@ -1,4 +1,4 @@
-# stamd
+# stark
 
 A CLI to easily create static sites using markdown.
 
@@ -11,11 +11,11 @@ TBD
 ### init
 
 ```bash
-stamd init
+stark init
 ```
 
 ### build
 
 ```bash
-stamd build
+stark build
 ```

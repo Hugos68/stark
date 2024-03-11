@@ -1,4 +1,4 @@
-module stamd
+module stark
 
 go 1.22.1
 

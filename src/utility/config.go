@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const ConfigFileName = "stamd.config.json"
+const ConfigFileName = "stark.config.json"
 
 type Config struct {
 	Name        string

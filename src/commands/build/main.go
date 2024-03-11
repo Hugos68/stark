@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"stamd/src/utility"
+	"stark/src/utility"
 	"strings"
 
 	"github.com/gomarkdown/markdown"

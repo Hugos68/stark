@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
-	"stamd/src/commands/build"
+	"stark/src/commands/build"
 )
 
 func main() {
 	if len(os.Args) == 1 {
 		fmt.Println("Usage:")
 		fmt.Println()
-		fmt.Println("stamd build - Build the project")
+		fmt.Println("stark build - Build the project")
 		os.Exit(0)
 	}
 
@@ -18,6 +18,6 @@ func main() {
 	case "build":
 		build.BuildCommand()
 	default:
-		fmt.Println("Unknown command, run 'stamd' to see the available commands.")
+		fmt.Println("Unknown command, run 'stark' to see the available commands.")
 	}
 }
